@@ -37,11 +37,11 @@ void Main()
         grid = placeShips(destroyers, submarines, carriers);
         enemyGrid = placeShipRNG();
 
-        while (total != 0 || enemyTotal != 0)
+        while (hitCountPlayer < 9 || hitCountEnemy < 10)
         {
             assembledTurn(playerTurn);
         }
-        if(total == 0)
+        if(hitCountEnemy == 9)
         {
             WriteLine("Computer Wins!");
         }
