@@ -391,6 +391,7 @@ void assembledTurn(bool playerTurn)
         if (fireShot(grid, Xcoord, Ycoord))
         {
             targetTracker[Xcoord, Ycoord] = 'X';
+            hitCountPlayer++;
         }
         else
         {
@@ -410,6 +411,7 @@ void assembledTurn(bool playerTurn)
         if (fireShot(grid, Xcoord, Ycoord))
         {
             grid[Xcoord, Ycoord] = 'X';
+            hitCountEnemy++;
         }
         else
         {
@@ -417,24 +419,4 @@ void assembledTurn(bool playerTurn)
         }
     }
     playerTurn = !playerTurn;
-    for (int i = 0; i < 9; i++)
-    {
-        for (int b = 0; b < 9; b++)
-        {
-            if (grid[i, b] == 'C' || grid[i, b] == 'S' || grid[i, b] == 'D')
-            {
-                hitCountPlayer++;
-            }
-        }
-    }
-    for (int i = 0; i < 9; i++)
-    {
-        for (int b = 0; b < 9; b++)
-        {
-            if (enemyGrid[i, b] == 'C' || grid[i, b] == 'S' || grid[i, b] == 'D')
-            {
-                hitCountEnemy++;
-            }
-        }
-    }
 }
