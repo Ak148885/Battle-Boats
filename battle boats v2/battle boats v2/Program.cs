@@ -39,7 +39,8 @@ void Main()
 
         while (hitCountPlayer < 9 || hitCountEnemy < 10)
         {
-            assembledTurn(playerTurn);
+            assembledTurn();
+            WriteLine(playerTurn);
         }
         if(hitCountEnemy == 9)
         {
@@ -74,16 +75,24 @@ string DisplayUI()
 //Displays a grid
 void DisplayGrids(char[,] grid, char[,] trackerSheet)
 {
-
+    for (int y = 0; y < 8; y++)
+    {
+        WriteLine($"[{grid[y, 0]}][{grid[y, 1]}][{grid[y, 2]}][{grid[y, 3]}][{grid[y, 4]}][{grid[y, 5]}][{grid[y, 6]}][{grid[y, 7]}]");
+    }
+    WriteLine(" ");
+    for (int y = 0; y < 8; y++)
+    {
+        WriteLine($"[{trackerSheet[y, 0]}][{trackerSheet[y, 1]}][{trackerSheet[y, 2]}][{trackerSheet[y, 3]}][{trackerSheet[y, 4]}][{trackerSheet[y, 5]}][{trackerSheet[y, 6]}][{trackerSheet[y, 7]}]");
+    }
 }
 
 //creates an empty 8x8 grid
 char[,] makeEmptyGrid()
 {
     char[,] temp = new char[8, 8];
-    for (int i = 1; i <= 8; i++)
+    for (int i = 0; i < 8; i++)
     {
-        for( int b = 1; b <= 8; b++)
+        for( int b = 0; b < 8; b++)
         {
             temp[i, b] = ' ';
         }
@@ -94,161 +103,176 @@ char[,] makeEmptyGrid()
 //places the ship
 char[,] placeShips(int destroyers, int submarines, int carriers)
 {
-    int Ycoord = -1;
-    int Xcoord = -1;
-    bool valid = false;
+    bool valid = true;
     int total = 5;
     string shipType = "";
     char[,] tempArray = new char[8, 8];
-    while (total > 0)
-    { 
-        while (!valid)
-        {
-            WriteLine("Enter ship type\n1 : Destroyer\n2 : Submarine\n3 : Carrier");
-            shipType = ReadLine();
-            //checks for destroyer amount
-            if (shipType == "1")
-            {
-                if (destroyers != 0)
-                {
-                    destroyers--;
-                    valid = true;
-                }
-                else
-                {
-                    WriteLine("You are out of destroyers");
-                }
-            }
-            //checks for submarine amount
-            if (shipType == "2")
-            {
-                if (submarines != 0)
-                {
-                    submarines--;
-                    valid = true;
-                }
-                else
-                {
-                    WriteLine("You are out of submarines");
-                }
-            }
-            //checks for carrier amount
-            if (shipType == "3")
-            {
-                if (carriers != 0)
-                {
-                    carriers--;
-                    valid = true;
-                }
-                else
-                {
-                    WriteLine("You are out of carriers");
-                }
-            }
-        }
-        //asks for ship alignment
-        WriteLine("Enter ship alignment\n1 : Vertical\n2 : Horizontal");
-        string direction = ReadLine();
-        //gets ship starting coordinates
-        while (Xcoord > 8 || Xcoord < 1 && ((tempArray[Xcoord, Ycoord] == 'C') || (tempArray[Xcoord, Ycoord] == 'D') || (tempArray[Xcoord, Ycoord] == 'S')) || Xcoord == -1)
-        {
-            WriteLine("Enter your starting X coordinate: ");
-            int temp = Convert.ToInt32(ReadLine());
-            if (temp > 0 && temp < 9)
-            {
-                Xcoord = temp;
-            }
-            else
-            {
-                WriteLine("Invalid Input");
-            }
-        }
-        while (Ycoord > 8 || Ycoord < 1 && ((tempArray[Xcoord, Ycoord] == 'C') || (tempArray[Xcoord, Ycoord] == 'D') || (tempArray[Xcoord, Ycoord] == 'S')) || Ycoord == -1)
-        {
-            WriteLine("Enter your starting Y coordinate: ");
-            int temp = Convert.ToInt32(ReadLine());
-            if (temp > 0 && temp < 9)
-            {
-                Ycoord = temp;
-            }
-            else
-            {
-                WriteLine("Invalid Input or there is an exitsting ship at this location");
-            }
-        }
-        //places a destroyer
+    while (valid)
+    {
+        WriteLine("Enter ship type\n1 : Destroyer\n2 : Submarine\n3 : Carrier");
+        shipType = ReadLine();
+        //checks for destroyer amount
         if (shipType == "1")
         {
-            tempArray[Xcoord, Ycoord] = 'D';
+            if (destroyers != 0)
+            {
+                destroyers--;
+                valid = true;
+                ShipPlace(tempArray, shipType);
+            }
+            else
+            {
+                WriteLine("You are out of destroyers");
+            }
         }
-        //checks fitting for submarine
+        //checks for submarine amount
         if (shipType == "2")
         {
-            if (direction == "1")
+            if (submarines != 0)
             {
-                if (Ycoord + 1 > 8)
-                {
-                    WriteLine("Your ship won't fit");
-                }
-                else
-                {
-                    tempArray[Xcoord, Ycoord] = 'S';
-                    tempArray[Xcoord, Ycoord + 1] = 'S';
-                }
+                submarines--;
+                valid = true;
+                ShipPlace(tempArray, shipType);
             }
             else
             {
-                if (Xcoord + 1 > 8)
-                {
-                    WriteLine("Your ship won't fit");
-                }
-                else
-                {
-                    tempArray[Xcoord, Ycoord] = 'S';
-                    tempArray[Xcoord + 1, Ycoord] = 'S';
-                }
+                WriteLine("You are out of submarines");
             }
-
         }
-        //checks fitting for carrier
+        //checks for carrier amount
         if (shipType == "3")
         {
-            if (direction == "1")
+            if (carriers != 0)
             {
-                if (Ycoord + 2 > 8)
-                {
-                    WriteLine("Your ship won't fit");
-                }
-                else
-                {
-                    tempArray[Xcoord, Ycoord] = 'C';
-                    tempArray[Xcoord, Ycoord + 1] = 'C';
-                    tempArray[Xcoord, Ycoord + 3] = 'C';
-                }
+                carriers--;
+                valid = true;
+                ShipPlace(tempArray, shipType);
             }
             else
             {
-                if (Xcoord + 2 > 8)
-                {
-                    WriteLine("Your ship won't fit");
-                }
-                else
-                {
-                    tempArray[Xcoord, Ycoord] = 'C';
-                    tempArray[Xcoord + 1, Ycoord] = 'C';
-                    tempArray[Xcoord + 2, Ycoord] = 'C';
-                }
+                WriteLine("You are out of carriers");
             }
         }
         total = destroyers + submarines + carriers;
+        if (total == 0)
+        {
+            valid = false;
+        }
     }
     return tempArray;
 }
+
+void ShipPlace(char[,] tempArray, string shipType)
+{
+    bool firstX = true;
+    bool firstY = true;
+    int Ycoord = 1;
+    int Xcoord = 1;
+    //asks for ship alignment
+    WriteLine("Enter ship alignment\n1 : Horizontal\n2 : Vertical");
+    string direction = ReadLine();
+    //gets ship starting coordinates
+    while (Xcoord > 7 || Xcoord < 0 || ((tempArray[Xcoord, Ycoord] == 'C') || (tempArray[Xcoord, Ycoord] == 'D') || (tempArray[Xcoord, Ycoord] == 'S')) || firstX)
+    {
+        WriteLine("Enter your starting X coordinate: ");
+        int temp = Convert.ToInt32(ReadLine()) - 1;
+        if (temp >= 0 && temp <= 8)
+        {
+            Ycoord = temp;
+        }
+        else
+        {
+            WriteLine("Invalid Input");
+        }
+        firstX = false;
+        WriteLine("Enter your starting Y coordinate: ");
+        temp = Convert.ToInt32(ReadLine()) - 1;
+        if (temp >= 0 && temp <= 8)
+        {
+            Xcoord = temp;
+        }
+        else
+        {
+            WriteLine("Invalid Input or there is an exitsting ship at this location");
+        }
+        firstY = false;
+    }
+    //places a destroyer
+    if (shipType == "1")
+    {
+        tempArray[Xcoord, Ycoord] = 'D';
+    }
+    //checks fitting for submarine
+    if (shipType == "2")
+    {
+        if (direction == "1")
+        {
+            if (Ycoord + 1 > 8)
+            {
+                WriteLine("Your ship won't fit");
+            }
+            else
+            {
+                tempArray[Xcoord, Ycoord] = 'S';
+                tempArray[Xcoord, Ycoord + 1] = 'S';
+            }
+        }
+        else
+        {
+            if (Xcoord + 1 > 8)
+            {
+                WriteLine("Your ship won't fit");
+            }
+            else
+            {
+                tempArray[Xcoord, Ycoord] = 'S';
+                tempArray[Xcoord + 1, Ycoord] = 'S';
+            }
+        }
+
+    }
+    //checks fitting for carrier
+    if (shipType == "3")
+    {
+        if (direction == "1")
+        {
+            if (Ycoord + 2 > 8)
+            {
+                WriteLine("Your ship won't fit");
+            }
+            else
+            {
+                tempArray[Xcoord, Ycoord] = 'C';
+                tempArray[Xcoord, Ycoord + 1] = 'C';
+                tempArray[Xcoord, Ycoord + 2] = 'C';
+            }
+        }
+        else
+        {
+            if (Xcoord + 2 > 8)
+            {
+                WriteLine("Your ship won't fit");
+            }
+            else
+            {
+                tempArray[Xcoord, Ycoord] = 'C';
+                tempArray[Xcoord + 1, Ycoord] = 'C';
+                tempArray[Xcoord + 2, Ycoord] = 'C';
+            }
+        }
+    }
+}
+
+       
+        
 //Randomly places ships
 char[,] placeShipRNG()
 {
-    int Ycoord = -1;
-    int Xcoord = -1;
+    WriteLine("PlaceShipRNG");
+    bool firstX = true;
+    bool firstY = true;
+    int Ycoord = 1;
+    int Xcoord = 1;
     bool valid = false;
     int direction = 0;
     bool tryAgain = true;
@@ -256,25 +280,37 @@ char[,] placeShipRNG()
     Random random = new Random();
     
     //places 2 destroyers
-    for (int i = 0; i <= 2; i++)
+    for (int i = 0; i < 2; i++)
     {
-        while ((temp[Xcoord, Ycoord] == 'C') || (temp[Xcoord, Ycoord] == 'D') || (temp[Xcoord, Ycoord] == 'S') || Xcoord == -1)
+        WriteLine("PlaceDestroyer");
+        do
         {
-            Ycoord = random.Next(1, 9);
-            Xcoord = random.Next(1, 9);
-            temp[Xcoord, Ycoord] = 'D';
+            Ycoord = random.Next(0, 8);
+            Xcoord = random.Next(0, 8);
+            if (temp[Xcoord, Ycoord] != 'C' || temp[Xcoord, Ycoord] != 'D' || temp[Xcoord, Ycoord] != 'S')
+            {
+                temp[Xcoord, Ycoord] = 'D';
+                tryAgain = false;
+            }
+            else
+            {
+                tryAgain = true;
+            }
         }
+        while (tryAgain);
+
     }
     //places 2 submarines
-    for (int i = 0; i <= 2; i++)
+    for (int i = 0; i < 2; i++)
     {
+        WriteLine("PlaceSub");
         while (tryAgain)
         {
-            while ((temp[Xcoord, Ycoord] == 'C') || (temp[Xcoord, Ycoord] == 'D') || (temp[Xcoord, Ycoord] == 'S') || Xcoord == -1)
+            while ((temp[Xcoord, Ycoord] == 'C') || (temp[Xcoord, Ycoord] == 'D') || (temp[Xcoord, Ycoord] == 'S'))
             {
                 direction = random.Next(1, 3);
-                Ycoord = random.Next(1, 9);
-                Xcoord = random.Next(1, 9);
+                Ycoord = random.Next(0, 9);
+                Xcoord = random.Next(0, 9);
                 if (direction == 1)
                 {
                     if (Ycoord + 1 > 8)
@@ -307,11 +343,12 @@ char[,] placeShipRNG()
     //places a carrier
     while (tryAgain)
     {
-        while ((temp[Xcoord, Ycoord] == 'C') || (temp[Xcoord, Ycoord] == 'D') || (temp[Xcoord, Ycoord] == 'S') || Xcoord == -1)
+        WriteLine("PlaceCarrier");
+        while ((temp[Xcoord, Ycoord] == 'C') || (temp[Xcoord, Ycoord] == 'D') || (temp[Xcoord, Ycoord] == 'S'))
         {
             direction = random.Next(1, 3);
-            Ycoord = random.Next(1, 9);
-            Xcoord = random.Next(1, 9);
+            Ycoord = random.Next(0, 9);
+            Xcoord = random.Next(0, 9);
             if (direction == 1)
             {
                 if (Ycoord + 2 > 8)
@@ -328,7 +365,7 @@ char[,] placeShipRNG()
             }
             else
             {
-                if (Xcoord + 1 > 8)
+                if (Xcoord + 2 > 8)
                 {
                     tryAgain = true;
                 }
@@ -363,60 +400,60 @@ bool fireShot(char[,] grid, int shotX, int shotY)
 
 
 //assembles the program for a turn
-void assembledTurn(bool playerTurn)
+void assembledTurn()
 {
     int Xcoord = -1;
     int Ycoord = -1;
+    DisplayGrids(grid, targetTracker);
     Random rng = new Random();
-    if (playerTurn)
+
+    //The Players Turn
+    while (Xcoord > 8 || Xcoord < 0)
     {
-        while (Xcoord > 8 || Xcoord < 1)
+        WriteLine("Enter the Y coordinate of your target cell");
+        Xcoord = Convert.ToInt32(ReadLine()) - 1;
+        if (Xcoord > 8 || Xcoord < 0)
         {
-            WriteLine("Enter the X coordinate of your target cell");
-            Xcoord = Convert.ToInt32(ReadLine());
-            if (Xcoord > 8 || Xcoord < 1)
-            {
-                WriteLine("Target out of bounds");
-            }
+            WriteLine("Target out of bounds");
         }
-        while (Ycoord > 8 || Ycoord < 1)
+    }
+    while (Ycoord > 8 || Ycoord < 0)
+    {
+        WriteLine("Enter the X coordinate of your target cell");
+        Ycoord = Convert.ToInt32(ReadLine()) - 1;
+        if (Ycoord > 8 || Ycoord < 0)
         {
-            WriteLine("Enter the Y coordinate of your target cell");
-            Ycoord = Convert.ToInt32(ReadLine());
-            if (Ycoord > 8 || Ycoord < 1)
-            {
-                WriteLine("Target out of bounds");
-            }
+            WriteLine("Target out of bounds");
         }
-        if (fireShot(grid, Xcoord, Ycoord))
-        {
-            targetTracker[Xcoord, Ycoord] = 'X';
-            hitCountPlayer++;
-        }
-        else
-        {
-            targetTracker[Xcoord, Ycoord] = '~';
-        }
+    }
+    if (fireShot(grid, Xcoord, Ycoord))
+    {
+        targetTracker[Xcoord, Ycoord] = 'X';
+        hitCountPlayer++;
     }
     else
     {
-        while (Xcoord > 8 || Xcoord < 1)
-        {
-            Xcoord = rng.Next(1, 9);
-        }
-        while (Ycoord > 8 || Ycoord < 1)
-        {
-            Ycoord = rng.Next(1, 9);
-        }
-        if (fireShot(grid, Xcoord, Ycoord))
-        {
-            grid[Xcoord, Ycoord] = 'X';
-            hitCountEnemy++;
-        }
-        else
-        {
-            grid[Xcoord, Ycoord] = '~';
-        }
+        targetTracker[Xcoord, Ycoord] = '~';
     }
-    playerTurn = !playerTurn;
+    DisplayGrids(grid, targetTracker);
+
+    //The computers Turn
+    while (Xcoord > 7 || Xcoord < 0)
+    {
+        Xcoord = rng.Next(0, 8);
+    }
+    while (Ycoord > 7 || Ycoord < 0)
+    {
+        Ycoord = rng.Next(0, 8);
+    }
+    if (fireShot(grid, Xcoord, Ycoord))
+    {
+        grid[Xcoord, Ycoord] = 'X';
+        hitCountEnemy++;
+    }
+    else
+    {
+        grid[Xcoord, Ycoord] = '~';
+    }
+    DisplayGrids(grid, targetTracker);
 }
