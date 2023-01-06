@@ -3,15 +3,12 @@
 int destroyers = 2;
 int submarines = 2;
 int carriers = 1;
-int total = 5;
 
 int hitCountPlayer = 0;
 int hitCountEnemy = 0;
 
 bool playerTurn = true;
 
-
-int enemyTotal = 5;
 
 char[,] grid = new char[8,8];
 char[,] targetTracker = new char[8, 8];
@@ -51,39 +48,48 @@ void Main()
             WriteLine("Player Wins!");
         }
     }
-    else if(choice == "2")
-    {
-
-    }
-    else if (choice == "3")
+    else if (choice == "2")
     {
         WriteLine("The player and computer each have 5 ships : 2 Destroyers (1 cell), 2 Submarines (2 cells) and 1 Carrier (3 cells) you try to guess\nthe computer's ship locations by typing in your  X and Y coordinates of a cell and check if there is a ship by firing at that cell\nthe result will be shown on your tracker grid and you can adjust your shot accordingly. Remember that the Computer is also shooting at your ships!");
     }
-    else if (choice == "4")
+    else if (choice == "3")
     {
         Environment.Exit(0);
     }
 }
 
-//Creates the original UI
+//Creates the UI
 string DisplayUI()
-{
-    WriteLine("Enter an option\n1 : Start a new game\n2 : Continue game\n3 : Read Rules\n4 : Quit");
+{ 
+    WriteLine("Enter an option\n1 : Start a new game\n2 : Read Rules\n3 : Quit");
     string choice = ReadLine();
     return choice;
 }
 //Displays a grid
 void DisplayGrids(char[,] grid, char[,] trackerSheet)
 {
+    ForegroundColor = ConsoleColor.DarkMagenta;
+    WriteLine("0 |  1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 ");
+    ForegroundColor = ConsoleColor.White;
     for (int y = 0; y < 8; y++)
     {
-        WriteLine($"[{grid[y, 0]}][{grid[y, 1]}][{grid[y, 2]}][{grid[y, 3]}][{grid[y, 4]}][{grid[y, 5]}][{grid[y, 6]}][{grid[y, 7]}]");
+        Write($"{y + 1} |"); 
+        if(grid[y,0] == 'C')
+        {
+            ForegroundColor = ConsoleColor.Yellow;
+        }
+        
+        [{grid[y, 0]}] [{grid[y, 1]}] [{grid[y, 2]}] [{grid[y, 3]}] [{grid[y, 4]}] [{grid[y, 5]}] [{grid[y, 6]}] [{grid[y, 7]}]");
     }
     WriteLine(" ");
+    ForegroundColor = ConsoleColor.DarkYellow;
+    WriteLine("0 |  1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 ");
+    ForegroundColor = ConsoleColor.Red;
     for (int y = 0; y < 8; y++)
     {
-        WriteLine($"[{trackerSheet[y, 0]}][{trackerSheet[y, 1]}][{trackerSheet[y, 2]}][{trackerSheet[y, 3]}][{trackerSheet[y, 4]}][{trackerSheet[y, 5]}][{trackerSheet[y, 6]}][{trackerSheet[y, 7]}]");
+        WriteLine($"{y + 1} | [{trackerSheet[y, 0]}] [{trackerSheet[y, 1]}] [{trackerSheet[y, 2]}] [{trackerSheet[y, 3]}] [{trackerSheet[y, 4]}] [{trackerSheet[y, 5]}] [{trackerSheet[y, 6]}] [{trackerSheet[y, 7]}]");
     }
+    ResetColor();
 }
 
 //creates an empty 8x8 grid
@@ -157,6 +163,16 @@ char[,] placeShips(int destroyers, int submarines, int carriers)
         if (total == 0)
         {
             valid = false;
+        }
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        for (int b = 0; b < 8; b++)
+        {
+            if (tempArray[i, b] != 'C' || tempArray[i, b] != 'D' || tempArray[i, b] != 'S')
+            {
+                tempArray[i, b] = ' ';
+            }
         }
     }
     return tempArray;
@@ -268,7 +284,6 @@ void ShipPlace(char[,] tempArray, string shipType)
 //Randomly places ships
 char[,] placeShipRNG()
 {
-    WriteLine("PlaceShipRNG");
     bool firstX = true;
     bool firstY = true;
     int Ycoord = 1;
@@ -282,7 +297,6 @@ char[,] placeShipRNG()
     //places 2 destroyers
     for (int i = 0; i < 2; i++)
     {
-        WriteLine("PlaceDestroyer");
         do
         {
             Ycoord = random.Next(0, 8);
@@ -303,7 +317,6 @@ char[,] placeShipRNG()
     //places 2 submarines
     for (int i = 0; i < 2; i++)
     {
-        WriteLine("PlaceSub");
         while (tryAgain)
         {
             while ((temp[Xcoord, Ycoord] == 'C') || (temp[Xcoord, Ycoord] == 'D') || (temp[Xcoord, Ycoord] == 'S'))
@@ -343,7 +356,6 @@ char[,] placeShipRNG()
     //places a carrier
     while (tryAgain)
     {
-        WriteLine("PlaceCarrier");
         while ((temp[Xcoord, Ycoord] == 'C') || (temp[Xcoord, Ycoord] == 'D') || (temp[Xcoord, Ycoord] == 'S'))
         {
             direction = random.Next(1, 3);
@@ -457,3 +469,4 @@ void assembledTurn()
     }
     DisplayGrids(grid, targetTracker);
 }
+
